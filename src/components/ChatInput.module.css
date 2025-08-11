@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border-top: 1px solid #ddd;
+    background: #fafafa;
+}
+
+.input {
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s;
+    resize: vertical; /* allow user to resize if desired */
+    line-height: 1.4;
+}
+
+
+.input:focus {
+    border-color: #007aff;
+}
+
+.sendButton {
+    background: #007aff;
+    color: white;
+    border: none;
+    border-radius: 16px;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.sendButton:hover {
+    background: #005ecb;
+}
+
+.dropZone {
+    flex: 1;
+    padding: 0.5rem;
+    text-align: center;
+    border: 2px dashed #ccc;
+    border-radius: 12px;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+
+.clearButton {
+    background: #ddd;
+    color: #333;
+    border: none;
+    border-radius: 16px;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.clearButton:hover {
+    background: #bbb;
+}
