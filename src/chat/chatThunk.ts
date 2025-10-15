@@ -3,7 +3,7 @@ import {addMessage, Message, setError, setLoading, setMessages} from './chatSlic
 import {db} from "../firebase";
 import {AppDispatch} from '../store';
 import toast from "react-hot-toast";
-import {uploadFileToSupabase} from "../superbase/uploadFile";
+import {uploadFileToFirebaseStorage} from "../storage/uploadFile";
 
 export const subscribeToMessages = () => (dispatch: AppDispatch) => {
     const messagesRef = ref(db, 'messages');
@@ -30,7 +30,7 @@ export const sendTextMessage = (text: string, sender: string) => async (dispatch
 export const sendFileMessage = (file: File, sender: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
     try {
-        const downloadURL = await uploadFileToSupabase(file);
+        const downloadURL = await uploadFileToFirebaseStorage(file);
 
         const messageRef = push(ref(db, 'messages'));
         await set(messageRef, {
