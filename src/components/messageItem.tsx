@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import { Message } from '../chat/chatSlice';
 import styles from './MessageList.module.css';
 import TextMessage from "./textMessage";
+import SnippetMessage from './snippetMessage';
 import ImageMessage from "./imageMessage";
 import VideoMessage from "./videoMessage";
 import FileMessage from './fileMessage';
@@ -32,7 +33,8 @@ function CopyMessageIcon() {
 
 export default function MessageItem({ message }: Props) {
     const copyTextContent = useCallback(async () => {
-        const text = message.type === 'text' ? message.content || '' : '';
+        const text =
+            message.type === 'text' || message.type === 'snippet' ? message.content || '' : '';
         if (!text) return;
         try {
             await navigator.clipboard.writeText(text);
@@ -55,6 +57,27 @@ export default function MessageItem({ message }: Props) {
                         onClick={copyTextContent}
                         title="Copy message"
                         aria-label="Copy message"
+                    >
+                        <CopyMessageIcon />
+                    </button>
+                </div>
+            </div>
+        );
+    }
+
+    if (message.type === 'snippet') {
+        return (
+            <div className={`${styles.messageItem} ${styles.snippetMessageItem}`}>
+                <div className={styles.textMessageRow}>
+                    <div className={styles.textMessageBody}>
+                        <SnippetMessage content={message.content || ''} />
+                    </div>
+                    <button
+                        type="button"
+                        className={styles.copyMessageButton}
+                        onClick={copyTextContent}
+                        title="Copy code"
+                        aria-label="Copy code"
                     >
                         <CopyMessageIcon />
                     </button>

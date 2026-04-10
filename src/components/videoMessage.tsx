@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import DownloadIcon from './DownloadIcon';
 import styles from './MessageList.module.css';
 
 interface Props {
@@ -50,6 +51,17 @@ export default function VideoMessage({ url, filename }: Props) {
                         setLoaded(true);
                     }}
                 />
+            )}
+            {loaded && !failed && (
+                <a
+                    href={url}
+                    {...(filename ? { download: filename } : {})}
+                    className={styles.mediaDownloadLink}
+                    title={filename ? `Download ${filename}` : 'Download video'}
+                    aria-label={filename ? `Download ${filename}` : 'Download video'}
+                >
+                    <DownloadIcon />
+                </a>
             )}
         </div>
     );

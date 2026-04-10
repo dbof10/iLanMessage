@@ -27,6 +27,21 @@ export const sendTextMessage = (text: string, sender: string) => async (dispatch
     }
 };
 
+export const sendSnippetMessage =
+    (code: string, sender: string) => async (dispatch: AppDispatch) => {
+        try {
+            const messageRef = push(ref(db, 'messages'));
+            await set(messageRef, {
+                type: 'snippet',
+                content: code,
+                sender,
+                timestamp: Date.now(),
+            });
+        } catch (error) {
+            dispatch(setError((error as Error).message));
+        }
+    };
+
 export const sendFileMessage = (file: File, sender: string) => async (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
     try {

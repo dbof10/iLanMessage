@@ -2,7 +2,7 @@ import {createSelector, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {RootState} from "../store";
 
 export interface Message {
-    type: 'text' | 'file';
+    type: 'text' | 'file' | 'snippet';
     content?: string;
     filename?: string;
     downloadURL?: string;
