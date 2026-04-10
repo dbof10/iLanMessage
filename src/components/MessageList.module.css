@@ -3,7 +3,7 @@
     align-self: flex-start;
     background: #f0f0f5;
     color: #111;
-    padding: 0.75rem 1rem;
+    padding: 0.35rem 0.85rem;
     border-radius: 20px;
     max-width: 75%;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -12,21 +12,146 @@
 
 }
 
+/* Text + copy: row grows with content; min-width 0 lets markdown wrap inside flex */
+.textMessageRow {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.35rem;
+}
+
+.textMessageBody {
+    flex: 1;
+    min-width: 0;
+}
+
+.copyMessageButton {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0.2rem;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #555;
+    cursor: pointer;
+    line-height: 0;
+    transition: background 0.15s ease, color 0.15s ease;
+}
+
+.copyMessageButton:hover {
+    background: rgba(0, 0, 0, 0.06);
+    color: #111;
+}
+
+.copyMessageButton:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: 2px;
+}
+
 .textContent {
     font-size: 1rem;
-    line-height: 1.4;
+    line-height: 1.35;
+}
+
+/* ReactMarkdown wraps blocks in <p>; browser default margins add bulky vertical space */
+.textContent :global(p) {
+    margin: 0;
+}
+
+.textContent :global(p + p) {
+    margin-top: 0.4em;
+}
+
+/* Fixed slot so layout does not jump when the image loads */
+.imageMessageFrame {
+    position: relative;
+    width: 280px;
+    max-width: 100%;
+    height: 200px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e5e5ea;
+    flex-shrink: 0;
+}
+
+@keyframes imageSkeletonShimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.imageSkeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(
+        90deg,
+        #dcdce0 0%,
+        #ececf0 40%,
+        #f4f4f7 50%,
+        #ececf0 60%,
+        #dcdce0 100%
+    );
+    background-size: 200% 100%;
+    animation: imageSkeletonShimmer 1.4s ease-in-out infinite;
 }
 
 .imagePreview {
-    max-width: 100%;
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    object-fit: contain;
+    object-position: center;
     border-radius: 12px;
-    margin-top: 0.5rem;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.imagePreviewLoaded {
+    opacity: 1;
+}
+
+.imageError {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #555;
+    background: #e5e5ea;
+}
+
+/* Same fixed slot + skeleton pattern as image messages */
+.videoMessageFrame {
+    composes: imageMessageFrame;
+}
+
+.videoSkeleton {
+    composes: imageSkeleton;
 }
 
 .videoPreview {
-    max-width: 100%;
-    border-radius: 12px;
-    margin-top: 0.5rem;
+    composes: imagePreview;
+}
+
+.videoPreviewLoaded {
+    composes: imagePreviewLoaded;
+}
+
+.videoError {
+    composes: imageError;
 }
 
 .fileLink {

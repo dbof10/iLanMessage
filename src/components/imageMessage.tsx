@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styles from './MessageList.module.css';
 
 interface Props {
@@ -7,11 +7,47 @@ interface Props {
 }
 
 export default function ImageMessage({ url, filename }: Props) {
+    const [loaded, setLoaded] = useState(false);
+    const [failed, setFailed] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
+
+    useEffect(() => {
+        setLoaded(false);
+        setFailed(false);
+    }, [url]);
+
+    useEffect(() => {
+        const el = imgRef.current;
+        if (el?.complete && el.naturalHeight > 0) {
+            setLoaded(true);
+        }
+    }, [url]);
+
     return (
-        <img
-            src={url}
-            alt={filename}
-            className={styles.imagePreview}
-        />
+        <div
+            className={styles.imageMessageFrame}
+            aria-busy={!loaded && !failed}
+        >
+            {!loaded && !failed && (
+                <div className={styles.imageSkeleton} aria-hidden />
+            )}
+            {failed ? (
+                <div className={styles.imageError} role="alert">
+                    Could not load image
+                </div>
+            ) : (
+                <img
+                    ref={imgRef}
+                    src={url}
+                    alt={filename || 'Shared image'}
+                    className={`${styles.imagePreview} ${loaded ? styles.imagePreviewLoaded : ''}`}
+                    onLoad={() => setLoaded(true)}
+                    onError={() => {
+                        setFailed(true);
+                        setLoaded(true);
+                    }}
+                />
+            )}
+        </div>
     );
 }
