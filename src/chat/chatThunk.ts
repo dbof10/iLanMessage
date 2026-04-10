@@ -1,15 +1,23 @@
-import {onChildAdded, push, ref, remove, set} from 'firebase/database';
-import {addMessage, Message, setError, setLoading, setMessages} from './chatSlice';
+import {onValue, push, ref, remove, set} from 'firebase/database';
+import {Message, setError, setLoading, setMessages} from './chatSlice';
 import {db} from "../firebase";
 import {AppDispatch} from '../store';
 import toast from "react-hot-toast";
+import {clearAllUploadedFiles} from "../storage/clearUploads";
 import {uploadFileToFirebaseStorage} from "../storage/uploadFile";
 
 export const subscribeToMessages = () => (dispatch: AppDispatch) => {
     const messagesRef = ref(db, 'messages');
-    onChildAdded(messagesRef, (snapshot) => {
-        const data = snapshot.val() as Message;
-        dispatch(addMessage(data));
+    return onValue(messagesRef, (snapshot) => {
+        const val = snapshot.val() as Record<string, Message> | null;
+        if (!val) {
+            dispatch(setMessages([]));
+            return;
+        }
+        const list = Object.values(val).sort(
+            (a, b) => a.timestamp - b.timestamp
+        );
+        dispatch(setMessages(list));
     });
 };
 
@@ -66,7 +74,19 @@ export const sendFileMessage = (file: File, sender: string) => async (dispatch: 
 
 
 export const clearMessages = () => async (dispatch: AppDispatch) => {
-    const messagesRef = ref(db, 'messages');
-    await remove(messagesRef);
-    dispatch(setMessages([]));
+    dispatch(setLoading(true));
+    try {
+        await clearAllUploadedFiles();
+        const messagesRef = ref(db, 'messages');
+        await remove(messagesRef);
+        dispatch(setMessages([]));
+        dispatch(setError(null));
+        toast.success('All messages and uploaded files were removed.');
+    } catch (error) {
+        const errMsg = (error as Error).message;
+        dispatch(setError(errMsg));
+        toast.error(`Clear failed: ${errMsg}`);
+    } finally {
+        dispatch(setLoading(false));
+    }
 };

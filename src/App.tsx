@@ -10,7 +10,8 @@ function App() {
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
-    dispatch(subscribeToMessages());
+    const unsubscribe = dispatch(subscribeToMessages());
+    return () => unsubscribe();
   }, [dispatch]);
 
   return (

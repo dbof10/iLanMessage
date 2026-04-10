@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useLayoutEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { selectMessages } from '../chat/chatSlice';
 import styles from './MessageList.module.css';
@@ -13,13 +13,23 @@ export default function MessageList() {
     const [isDragging, setIsDragging] = useState(false);
     const dragCounter = useRef(0);
 
-    useEffect(() => {
-        if (containerRef.current) {
-            containerRef.current.scrollTo({
-                top: containerRef.current.scrollHeight,
-                behavior: 'smooth',
-            });
-        }
+    useLayoutEffect(() => {
+        const el = containerRef.current;
+        if (!el) return;
+
+        const scrollToBottom = () => {
+            el.scrollTop = el.scrollHeight;
+        };
+
+        scrollToBottom();
+        let innerRaf = 0;
+        const outerRaf = requestAnimationFrame(() => {
+            innerRaf = requestAnimationFrame(scrollToBottom);
+        });
+        return () => {
+            cancelAnimationFrame(outerRaf);
+            cancelAnimationFrame(innerRaf);
+        };
     }, [messages]);
 
     const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
